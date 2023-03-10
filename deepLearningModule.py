@@ -157,6 +157,7 @@ class DeepLearningEnviroment:
                         '51': 'petunia'}
 
   le = preprocessing.LabelEncoder()
+  flowerDatasetFlag = True
 
   def getSpeciesDictionary(self):
     return self.label_to_species_dict
@@ -177,6 +178,7 @@ class DeepLearningEnviroment:
     # Create a dataframe for selected species of plants
 
     ## Parameters
+    self.flowerDatasetFlag = False
     species_name = 'Grape'
     images_per_label = 250
 
@@ -219,7 +221,9 @@ class DeepLearningEnviroment:
     print('Validation Set:'.ljust(15), validation_df.shape)
 
   def createFlowerDataset(self, labels=None, trainSetFraction=0.8, seed=42):
+    
     # Store the image paths and labels in a Pandas dataframe
+    self.flowerDatasetFlag = True
     if labels is None:
       labels = list(range(1, 11))
 
@@ -341,7 +345,10 @@ class DeepLearningEnviroment:
     with torch.no_grad():
       predictions = model(image.unsqueeze(dim=0).to(device))
       pred_labels = torch.softmax(predictions, 1).argmax()
-      print('Prediction: ', self.label_to_species_dict[str(self.le.inverse_transform([pred_labels.item()])[0])])
+    if self.flowerDatasetFlag:
+        print('Prediction: ', self.label_to_species_dict[str(self.le.inverse_transform([pred_labels.item()])[0])])
+    else:
+        print('Prediction: ', str(self.le.inverse_transform([pred_labels.item()])[0]))
       print('Probability: ', round(torch.softmax(predictions, 1).max().item(), 4))
 
   def plot_model_history(self, history, model_name, loss_type):
@@ -379,7 +386,7 @@ class DeepLearningEnviroment:
     ax2.spines["left"].set_visible(False) 
 
     ax2.plot(np.arange(1, len(history[0])+1, 1.0), history[0], color=tableau20[0])
-    ax2.plot(np.arange(1, len(history[0])+1, 1.0), history[2], color=tableau20[12])
+    ax2.plot(np.arange(1, len(history[0])+1, 1.0), history[0], color=tableau20[12])
     ax2.set_title('Model Loss')
     ax2.set_xlabel('Epoch')
     ax2.set_ylabel(loss_type)
