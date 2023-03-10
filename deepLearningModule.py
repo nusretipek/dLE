@@ -346,9 +346,9 @@ class DeepLearningEnviroment:
       predictions = model(image.unsqueeze(dim=0).to(device))
       pred_labels = torch.softmax(predictions, 1).argmax()
     if self.flowerDatasetFlag:
-        print('Prediction: ', self.label_to_species_dict[str(self.le.inverse_transform([pred_labels.item()])[0])])
+      print('Prediction: ', self.label_to_species_dict[str(self.le.inverse_transform([pred_labels.item()])[0])])
     else:
-        print('Prediction: ', str(self.le.inverse_transform([pred_labels.item()])[0]))
+      print('Prediction: ', str(self.le.inverse_transform([pred_labels.item()])[0]))
     print('Probability: ', round(torch.softmax(predictions, 1).max().item(), 4))
 
   def plot_model_history(self, history, model_name, loss_type):
